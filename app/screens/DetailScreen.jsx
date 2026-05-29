@@ -91,7 +91,7 @@ const pt = StyleSheet.create({
     stepRow: { flexDirection: 'row', alignItems: 'flex-start' },
     leftCol: { alignItems: 'center', width: 38 },
     rightCol: { flex: 1, paddingLeft: 14, paddingTop: 2 },
-    dot       : {
+    dot: {
         width: 30, height: 30, borderRadius: 15,
         alignItems: 'center', justifyContent: 'center',
     },
@@ -316,16 +316,7 @@ export default function DetailScreen({ route, navigation }) {
                         </View>
                     </View>
                 )}
-
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.8}
-                >
-                    <Ionicons name="arrow-back-outline" size={17} color="#64748b" />
-                    <Text style={styles.backButtonText}>Kembali ke Daftar</Text>
-                </TouchableOpacity>
-
+                
             </Animated.ScrollView>
         </View>
     );
