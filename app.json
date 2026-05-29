@@ -20,10 +20,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.thoriqar1301.LaundryApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ca9b71e9-af39-4c09-9b1a-a6e44ab681fa"
+      }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }
