@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getItem } from '../services/storage';
 
+import OnBoardingScreen from '../screens/OnBoardingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import DetailScreen from '../screens/DetailScreen';
@@ -51,7 +52,7 @@ function TabBarLabel({ label, focused }) {
 const tb = StyleSheet.create({
     iconWrap: { alignItems: 'center', justifyContent: 'center', width: 44, height: 36, borderRadius: 12, position: 'relative' },
     activeGlow: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 12, backgroundColor: 'rgba(56,189,248,0.1)', borderWidth: 1, borderColor: 'rgba(56,189,248,0.15)' },
-    label: { fontSize: 10, fontWeight: '600', color: '#334155', marginTop: 7.5, letterSpacing: 0.5 },
+    label: { fontSize: 10, fontWeight: '600', color: '#334155', marginTop: 7.5, letterSpacing: 0.3 },
     labelActive: { color: '#38bdf8', fontWeight: '700' },
 });
 
@@ -72,7 +73,7 @@ function MainTabs() {
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: -4 },
                     shadowOpacity: 0.4,
-                    shadowRadius: 10,
+                    shadowRadius: 12,
                 },
                 tabBarActiveTintColor: '#38bdf8',
                 tabBarInactiveTintColor: '#334155',
@@ -149,20 +150,32 @@ const ls = StyleSheet.create({
 export default function AppNavigator() {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [onboardingDone, setOnboardingDone] = useState(false);
 
     useEffect(() => {
-        checkAuth();
+        checkInitialState();
     }, []);
 
-    const checkAuth = async () => {
+    const checkInitialState = async () => {
         try {
-            const token = await getItem('token');
+            const [token, obDone] = await Promise.all([
+                getItem('token'),
+                getItem('onboarding_done'),
+            ]);
             setIsAuthenticated(!!token);
+            setOnboardingDone(obDone === 'true');
         } catch {
             setIsAuthenticated(false);
+            setOnboardingDone(false);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const getInitialRoute = () => {
+        if (!onboardingDone) return 'OnBoarding';
+        if (isAuthenticated) return 'Main';
+        return 'Login';
     };
 
     if (isLoading) return <LoadingScreen />;
@@ -171,8 +184,9 @@ export default function AppNavigator() {
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
-                initialRouteName={isAuthenticated ? 'Main' : 'Login'}
+                initialRouteName={getInitialRoute()}
             >
+                <Stack.Screen name="OnBoarding" component={OnBoardingScreen} options={{ animation: 'fade' }} />
                 <Stack.Screen name="Login" component={LoginScreen} options={{ animation: 'fade' }} />
                 <Stack.Screen name="Main" component={MainTabs} options={{ animation: 'fade' }} />
                 <Stack.Screen name="Detail" component={DetailScreen} options={{ animation: 'slide_from_right' }} />
